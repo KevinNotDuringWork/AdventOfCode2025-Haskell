@@ -3,6 +3,7 @@
 import Debug.Trace 
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
+import Data.List (scanl, scanl')
 
 instVal :: String -> Int
 instVal ins = read (tail ins) :: Int  
@@ -15,6 +16,7 @@ dial st del = mod (st + del) 100
   - entering into 0 is a "click" hence 1 
   - exiting out of 0 is not counted 
 --}
+
 evalRemainder :: Int -> Int -> Int 
 evalRemainder st del 
   | st > 0, st + del <= 0 = 1
@@ -28,11 +30,8 @@ countZero st del
   | otherwise = div (-del) 100 + evalRemainder st (rem del 100) 
  
 dial2 :: Int -> Int -> (Int, Int)
-dial2 st del =
-  (res, countZero st del)
-  where
-    res = dial st del 
-
+dial2 st del =(dial st del, countZero st del)
+  
 intrp :: Char -> Int -> Int
 intrp 'L' val = -val 
 intrp 'R' val = val   
@@ -41,11 +40,7 @@ main :: IO()
 main = do
   instructions <- fmap Text.lines (Text.readFile "input.txt") 
   let
-    result = scanl (\idx ins ->
-      dial idx $ intrp (head ins) $ instVal ins  
-      ) 50 (map Text.unpack instructions)
-
-    result2 = scanl (\idx ins ->
+    result2 = scanl' (\idx ins ->
       dial2 (fst idx) $ intrp (head ins) $ instVal ins 
 
       {-- in trace (
@@ -55,8 +50,8 @@ main = do
       ) --} 
 
       ) (50, 0) (map Text.unpack instructions)
-
-    zeros = filter (==0) result
+      
+    zeros = filter (\x -> fst x == 0) result2 
     cross = sum (map snd result2)
 
   print $ length zeros

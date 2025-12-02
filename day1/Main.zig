@@ -4,10 +4,6 @@ pub fn main() !void {
     const f = try std.fs.cwd().openFile("./example.txt", .{ .mode = .read_only });
     defer f.close();
 
-    // Create an IO backend (single-threaded for simplicity)
-    // var threaded = std.Io.Threaded.init_single_threaded;
-    //const io_backend = threaded.io();
-
     var buf: [4096]u8 = undefined;
     var reader = f.reader(&buf);
     const in = &reader.interface;
@@ -21,7 +17,7 @@ pub fn main() !void {
             break;
         }
 
-        const dir: u8 = @intCast(line[0]);
+        const dir: u8 = line[0];
         const amount = try std.fmt.parseInt(i16, line[1..], 10);
 
         switch (dir) {
