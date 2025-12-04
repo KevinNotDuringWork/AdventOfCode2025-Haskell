@@ -36,8 +36,7 @@ maxV st runway
         {-- prune results that don't make sense --}
         {-- prune penalties: why pay higher price for the same value?? --}
         {-- Crucial insight is that you must choose the highest in that window --}
-        penalties = take 1 $ sortBy (flip compare `on` fst) $ 
-          uniqueByFirst $ 
+        penalties = take 1 $ sortBy (flip compare `on` fst) $
           take (length st - runway + 1) $ zip st [1..length st]
         
         mr = map (\x -> fst x : maxV (drop (snd x) st) (runway - 1)) penalties
