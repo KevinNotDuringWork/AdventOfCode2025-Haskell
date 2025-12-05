@@ -2,11 +2,12 @@
 
 import Data.List (sortBy)
 import Data.Function (on)
-import Debug.Trace
+import Debug.Trace 
 
 maxV :: String -> Int -> String
 maxV st runway
   | runway <= 0 || st == "" = "0"
+  | length st == runway = st ++ "0"
   | otherwise =
 
     {-- trace(
@@ -15,12 +16,12 @@ maxV st runway
       ", runway=" ++ show runway ++ 
       ", penalties=" ++ show penalties ++ 
       ", mr=" ++ show mr
-    ) $ --}
-    
+    ) $ --} 
+     
     show $ maximum $ map (read :: String -> Int) mr
       where
 
-        {-- Crucial insight is that you must choose the highest in that window --}
+        --Crucial insight is that you must choose the highest in the window
         penalties = take 1 $ sortBy (flip compare `on` fst) $
           take (length st - runway + 1) $ zip st [1..length st]
         
@@ -28,7 +29,7 @@ maxV st runway
 
 main :: IO()
 main = do
-  banks  <- fmap lines (readFile "example.txt")
+  banks  <- fmap lines (readFile "input.txt")
 
   {-- Part 1 --}
   print $ sum $ map ((read :: (String -> Int)) . take 2 . flip maxV 2) banks
